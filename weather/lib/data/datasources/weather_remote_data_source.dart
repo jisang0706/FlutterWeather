@@ -1,15 +1,16 @@
 import 'package:dio/dio.dart';
+import 'package:weather/core/network/dio_client.dart';
 import '../../core/config/config.dart';
 
 // Weather API 호출
 class WeatherRemoteDataSource {
-  WeatherRemoteDataSource(this.dio);
+  WeatherRemoteDataSource();
 
-  final Dio dio;
+  final Dio dio = DioClient().weatherDio;
 
-  Future<Response> getCurrentWeather(
+  Future<Map<String, dynamic>> getCurrentWeather(
       {required String baseDate, required String baseTime}) async {
-    final response = await dio.get(Config.weatherBaseUrl, queryParameters: {
+    final response = await dio.get("getUltraSrtNcst", queryParameters: {
       "serviceKey": Config.weatherApiKey,
       "numOfRows": 10,
       "pageNo": 1,
@@ -19,6 +20,6 @@ class WeatherRemoteDataSource {
       "nx": 61,
       "ny": 128
     });
-    return response;
+    return response.data;
   }
 }

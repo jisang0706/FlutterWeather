@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:weather/domain/usecase/get_weather_usecase.dart';
 
@@ -29,7 +28,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String weatherInfo = "날씨 정보를 불러오는 중";
-  final getWeatherUseCase = GetWeatherUsecase(Dio());
+  final getWeatherUseCase = GetWeatherUsecase();
 
   @override
   void initState() {

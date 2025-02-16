@@ -45,5 +45,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>현재 위치를 가져오기 위한 권한</string>
+
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>앱의 백그라운드 위치 권한</string>
 </dict>
 </plist>

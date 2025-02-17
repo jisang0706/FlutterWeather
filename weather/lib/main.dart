@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weather/domain/usecase/get_address_usecase.dart';
 import 'package:weather/domain/usecase/get_weather_usecase.dart';
 
 void main() {
@@ -30,6 +31,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String weatherInfo = "날씨 정보를 불러오는 중";
+  String appBarText = "날씨";
   final getWeatherUseCase = GetWeatherUsecase();
 
   @override
@@ -41,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("성북구 날씨")),
+      appBar: AppBar(title: Text(appBarText)),
       body: Center(
           child: Padding(
         padding: const EdgeInsets.all(16.8),
@@ -53,11 +55,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // 날씨 정보 weatherInfo에 넣고 UI업데이트
   Future<void> fetchWeather() async {
+    // 역지오코딩 호출
+    final address = await GetAddressUsecase().execute();
+
     final t1hValue = await getWeatherUseCase.execute();
 
     setState(() {
       weatherInfo = t1hValue.fold((failure) => "error: ${failure.message}",
           (result) => "seccess: $result");
+
+      appBarText = address.fold((failure) => "fail: ${failure.message}",
+          (address) => "success: ${address.region3Depth} 날씨");
     });
   }
 }

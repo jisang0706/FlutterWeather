@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
-
-import '../config/config.dart';
+import 'package:weather/core/config/config.dart';
 
 // api 통신을 위한 Dio 싱글톤 패턴
 class DioClient {

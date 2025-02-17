@@ -12,7 +12,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Weather',
-        theme: ThemeData(),
+        theme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
+        themeMode: ThemeMode.system,
         home: const MyHomePage(title: 'Weather'));
   }
 }
@@ -51,16 +53,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // 날씨 정보 weatherInfo에 넣고 UI업데이트
   Future<void> fetchWeather() async {
-    try {
-      final t1hValue = await getWeatherUseCase.execute();
+    final t1hValue = await getWeatherUseCase.execute();
 
-      setState(() {
-        weatherInfo = t1hValue;
-      });
-    } catch (e) {
-      setState(() {
-        weatherInfo = "날씨 정보를 불러올 수 없습니다.\n$e";
-      });
-    }
+    setState(() {
+      weatherInfo = t1hValue.fold((failure) => "error: ${failure.message}",
+          (result) => "seccess: $result");
+    });
   }
 }

@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String weatherInfo = "날씨 정보를 불러오는 중";
   String appBarText = "날씨";
   final getWeatherUseCase = GetWeatherUsecase();
+  final getAddressUsecase = GetAddressUsecase();
 
   @override
   void initState() {
@@ -56,16 +57,16 @@ class _MyHomePageState extends State<MyHomePage> {
   // 날씨 정보 weatherInfo에 넣고 UI업데이트
   Future<void> fetchWeather() async {
     // 역지오코딩 호출
-    final address = await GetAddressUsecase().execute();
+    final address = await getAddressUsecase.execute();
 
     final t1hValue = await getWeatherUseCase.execute();
 
     setState(() {
       weatherInfo = t1hValue.fold((failure) => "error: ${failure.message}",
-          (result) => "seccess: $result");
+          (result) => "${result.t1h} 도");
 
       appBarText = address.fold((failure) => "fail: ${failure.message}",
-          (address) => "success: ${address.region3Depth} 날씨");
+          (address) => "${address.region3Depth} 날씨");
     });
   }
 }

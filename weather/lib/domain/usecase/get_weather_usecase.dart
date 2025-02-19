@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:weather/core/utils/date_time_helper.dart';
 import 'package:weather/data/repository/weather_repository.dart';
+import 'package:weather/domain/entities/region_entity.dart';
 import 'package:weather/domain/entities/weather_entity.dart';
 import 'package:weather/domain/failures/failure.dart';
 
@@ -12,10 +13,12 @@ class GetWeatherUsecase {
     repository = WeatherRepository();
   }
 
-  Future<Either<Failure, WeatherEntity>> execute() async {
+  Future<Either<Failure, WeatherEntity>> execute(
+      RegionEntity regionEntity) async {
     final String date = DateTimeHelper.getCurrentDate();
     final String time = DateTimeHelper.getCurrentTime();
 
-    return await repository.getWeatherT1H(date: date, time: time);
+    return await repository.getWeatherT1H(
+        date: date, time: time, regionEntity: regionEntity);
   }
 }

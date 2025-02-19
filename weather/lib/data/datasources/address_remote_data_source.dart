@@ -9,7 +9,7 @@ class AddressRemoteDataSource {
   Future<Map<String, dynamic>> getAddressFromCoordinates(
       {required double latitude, required double longitude}) async {
     try {
-      final response = await dio.get("coord2address.json", queryParameters: {
+      final response = await dio.get("coord2regioncode.json", queryParameters: {
         "x": longitude,
         "y": latitude,
       });

@@ -23,7 +23,8 @@ class WeatherEntity {
     final items = json["response"]["body"]["items"]["item"] as List;
 
     final Map<String, double?> weatherMap = {
-      for (var item in items) item["category"]: item["obsrValue"]
+      for (var item in items)
+        item["category"]: double.tryParse(item["obsrValue"])
     };
 
     return WeatherEntity(

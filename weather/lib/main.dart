@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:weather/domain/entities/address_entity.dart';
 import 'package:weather/domain/usecase/get_address_usecase.dart';
+import 'package:weather/domain/usecase/get_region_by_name_usecase.dart';
 import 'package:weather/domain/usecase/get_weather_usecase.dart';
 
 void main() {
@@ -34,6 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String appBarText = "날씨";
   final getWeatherUseCase = GetWeatherUsecase();
   final getAddressUsecase = GetAddressUsecase();
+  final getRegionByNameUsecase = GetRegionByNameUsecase();
 
   @override
   void initState() {
@@ -59,14 +62,19 @@ class _MyHomePageState extends State<MyHomePage> {
     // 역지오코딩 호출
     final address = await getAddressUsecase.execute();
 
-    final t1hValue = await getWeatherUseCase.execute();
+    setState(() {
+      appBarText = address.fold(
+          (failure) => "서울특별시 날씨", (address) => "${address.region3Depth} 날씨");
+    });
+
+    final regionEntity = await getRegionByNameUsecase
+        .execute(address.getOrElse(() => AddressEntity.emptyEntity()));
+
+    final weather = await getWeatherUseCase.execute(regionEntity);
 
     setState(() {
-      weatherInfo = t1hValue.fold((failure) => "error: ${failure.message}",
+      weatherInfo = weather.fold((failure) => "error: ${failure.message}",
           (result) => "${result.t1h} 도");
-
-      appBarText = address.fold((failure) => "fail: ${failure.message}",
-          (address) => "${address.region3Depth} 날씨");
     });
   }
 }

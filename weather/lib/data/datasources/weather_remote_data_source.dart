@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:weather/core/exception/server_exception.dart';
 import 'package:weather/core/network/dio_client.dart';
+import 'package:weather/domain/entities/region_entity.dart';
 import '../../core/config/config.dart';
 
 // Weather API 호출
@@ -10,7 +11,9 @@ class WeatherRemoteDataSource {
   final Dio dio = DioClient().weatherDio;
 
   Future<Map<String, dynamic>> getCurrentWeather(
-      {required String baseDate, required String baseTime}) async {
+      {required String baseDate,
+      required String baseTime,
+      required RegionEntity regionEntity}) async {
     try {
       final response = await dio.get("getUltraSrtNcst", queryParameters: {
         "serviceKey": Config.weatherApiKey,
@@ -19,8 +22,8 @@ class WeatherRemoteDataSource {
         "dataType": "JSON",
         "base_date": baseDate,
         "base_time": baseTime,
-        "nx": 61,
-        "ny": 128
+        "nx": regionEntity.nx,
+        "ny": regionEntity.ny
       });
       return response.data;
     } on DioException catch (e) {

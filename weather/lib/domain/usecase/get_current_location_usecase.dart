@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:weather/data/repository/location_repository_impl.dart';
 import 'package:weather/domain/failures/failure.dart';
 import 'package:weather/domain/repositories/location_repository.dart';
 

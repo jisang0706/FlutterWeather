@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:weather/core/config/config.dart';
 import 'package:weather/core/exception/server_exception.dart';
 import 'package:weather/domain/entities/region_entity.dart';
-import '../../core/config/config.dart';
 
 // Weather API 호출
 class WeatherRemoteDataSource {

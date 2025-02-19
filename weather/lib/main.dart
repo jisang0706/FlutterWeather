@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:weather/core/dependency_injection.dart';
 import 'package:weather/domain/entities/address_entity.dart';
 import 'package:weather/domain/usecase/get_address_usecase.dart';
-import 'package:weather/domain/usecase/get_region_by_name_usecase.dart';
+import 'package:weather/domain/usecase/get_region_by_code_usecase.dart';
 import 'package:weather/domain/usecase/get_weather_usecase.dart';
 
 void main() {
@@ -39,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String appBarText = "날씨";
   final getAddressUsecase = GetIt.instance<GetAddressUsecase>();
   final getWeatherUseCase = GetIt.instance<GetWeatherUsecase>();
-  final getRegionByNameUsecase = GetRegionByNameUsecase();
+  final getRegionByNameUsecase = GetIt.instance<GetRegionByCodeUsecase>();
 
   @override
   void initState() {

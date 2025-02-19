@@ -1,17 +1,15 @@
 import 'package:dartz/dartz.dart';
 import 'package:weather/core/utils/date_time_helper.dart';
-import 'package:weather/data/repository/weather_repository.dart';
 import 'package:weather/domain/entities/region_entity.dart';
 import 'package:weather/domain/entities/weather_entity.dart';
 import 'package:weather/domain/failures/failure.dart';
+import 'package:weather/domain/repositories/weather_repository.dart';
 
 // Weather Repository 사용을 위한 Usecase Class
 class GetWeatherUsecase {
-  late final WeatherRepository repository;
+  final WeatherRepository repository;
 
-  GetWeatherUsecase() {
-    repository = WeatherRepository();
-  }
+  GetWeatherUsecase({required this.repository});
 
   Future<Either<Failure, WeatherEntity>> execute(
       RegionEntity regionEntity) async {

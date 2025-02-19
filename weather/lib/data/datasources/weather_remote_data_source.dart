@@ -1,14 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:weather/core/exception/server_exception.dart';
-import 'package:weather/core/network/dio_client.dart';
 import 'package:weather/domain/entities/region_entity.dart';
 import '../../core/config/config.dart';
 
 // Weather API 호출
 class WeatherRemoteDataSource {
-  WeatherRemoteDataSource();
+  final Dio dio;
 
-  final Dio dio = DioClient().weatherDio;
+  WeatherRemoteDataSource({required this.dio});
 
   Future<Map<String, dynamic>> getCurrentWeather(
       {required String baseDate,

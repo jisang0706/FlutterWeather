@@ -7,15 +7,15 @@ import 'package:weather/domain/repositories/address_repository.dart';
 
 // 역지오코딩 응답 엔티티로 반환
 class AddressRepositoryImpl implements AddressRepository {
-  final AddressRemoteDataSource remoteDataSource;
+  final AddressRemoteDataSource addressRemoteDataSource;
 
-  AddressRepositoryImpl({required this.remoteDataSource});
+  AddressRepositoryImpl({required this.addressRemoteDataSource});
 
   @override
   Future<Either<Failure, AddressEntity>> getAddress(
       {required double latitude, required double longitude}) async {
     try {
-      final data = await remoteDataSource.getAddressFromCoordinates(
+      final data = await addressRemoteDataSource.getAddressFromCoordinates(
           latitude: latitude, longitude: longitude);
       return Right(AddressEntity.fromJson(data));
     } on ServerException catch (e) {

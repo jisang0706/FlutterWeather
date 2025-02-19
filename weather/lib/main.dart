@@ -37,8 +37,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String weatherInfo = "날씨 정보를 불러오는 중";
   String appBarText = "날씨";
-  final getWeatherUseCase = GetWeatherUsecase();
   final getAddressUsecase = GetIt.instance<GetAddressUsecase>();
+  final getWeatherUseCase = GetIt.instance<GetWeatherUsecase>();
   final getRegionByNameUsecase = GetRegionByNameUsecase();
 
   @override

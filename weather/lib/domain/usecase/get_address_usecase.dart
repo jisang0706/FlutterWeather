@@ -8,7 +8,7 @@ import 'package:weather/domain/usecase/get_current_location_usecase.dart';
 class GetAddressUsecase {
   final AddressRepository repository;
 
-  GetAddressUsecase(this.repository);
+  GetAddressUsecase({required this.repository});
 
   Future<Either<Failure, AddressEntity>> execute() async {
     final position = await GetCurrentLocationUsecase().execute();

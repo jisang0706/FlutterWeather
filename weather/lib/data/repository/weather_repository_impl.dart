@@ -4,15 +4,21 @@ import 'package:weather/data/datasources/weather_remote_data_source.dart';
 import 'package:weather/domain/entities/region_entity.dart';
 import 'package:weather/domain/entities/weather_entity.dart';
 import 'package:weather/domain/failures/failure.dart';
+import 'package:weather/domain/repositories/weather_repository.dart';
 
 // WeatherRemoteDataSource에서 데이터 받은 뒤 엔티티로 반환
-class WeatherRepository {
+class WeatherRepositoryImpl implements WeatherRepository {
+  final WeatherRemoteDataSource weatherRemoteDataSource;
+
+  WeatherRepositoryImpl({required this.weatherRemoteDataSource});
+
+  @override
   Future<Either<Failure, WeatherEntity>> getWeatherT1H(
       {required String date,
       required String time,
       required RegionEntity regionEntity}) async {
     try {
-      final data = await WeatherRemoteDataSource().getCurrentWeather(
+      final data = await weatherRemoteDataSource.getCurrentWeather(
           baseDate: date, baseTime: time, regionEntity: regionEntity);
 
       return Right(WeatherEntity.fromJson(data));

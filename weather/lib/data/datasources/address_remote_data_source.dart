@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:weather/core/exception/server_exception.dart';
-import 'package:weather/core/network/dio_client.dart';
 
 // 역지오코딩 API 호출
 class AddressRemoteDataSource {
-  final Dio dio = DioClient().kakaoDio;
+  final Dio dio;
+
+  AddressRemoteDataSource({required this.dio});
 
   Future<Map<String, dynamic>> getAddressFromCoordinates(
       {required double latitude, required double longitude}) async {

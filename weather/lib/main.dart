@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:weather/core/dependency_injection.dart';
 import 'package:weather/domain/entities/address_entity.dart';
 import 'package:weather/domain/usecase/get_address_usecase.dart';
 import 'package:weather/domain/usecase/get_region_by_name_usecase.dart';
 import 'package:weather/domain/usecase/get_weather_usecase.dart';
 
 void main() {
+  setupLocator();
   runApp(const MyApp());
 }
 
@@ -35,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String weatherInfo = "날씨 정보를 불러오는 중";
   String appBarText = "날씨";
   final getWeatherUseCase = GetWeatherUsecase();
-  final getAddressUsecase = GetAddressUsecase();
+  final getAddressUsecase = GetIt.instance<GetAddressUsecase>();
   final getRegionByNameUsecase = GetRegionByNameUsecase();
 
   @override

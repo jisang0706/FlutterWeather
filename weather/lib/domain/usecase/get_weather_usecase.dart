@@ -7,16 +7,16 @@ import 'package:weather/domain/repositories/weather_repository.dart';
 
 // Weather Repository 사용을 위한 Usecase Class
 class GetWeatherUsecase {
-  final WeatherRepository repository;
+  final WeatherRepository weatherRepository;
 
-  GetWeatherUsecase({required this.repository});
+  GetWeatherUsecase({required this.weatherRepository});
 
   Future<Either<Failure, WeatherEntity>> execute(
       RegionEntity regionEntity) async {
     final String date = DateTimeHelper.getCurrentDate();
     final String time = DateTimeHelper.getCurrentTime();
 
-    return await repository.getWeatherT1H(
+    return await weatherRepository.getWeatherT1H(
         date: date, time: time, regionEntity: regionEntity);
   }
 }

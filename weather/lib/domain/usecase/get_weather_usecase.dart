@@ -13,10 +13,19 @@ class GetWeatherUsecase {
 
   Future<Either<Failure, WeatherEntity>> execute(
       RegionEntity regionEntity) async {
-    final String date = DateTimeHelper.getCurrentDate();
-    final String time = DateTimeHelper.getCurrentTime();
+    String date = DateTimeHelper.getCurrentDate();
+    String time = DateTimeHelper.getCurrentTime();
 
-    return await weatherRepository.getWeatherT1H(
+    var result = await weatherRepository.getWeatherT1H(
         date: date, time: time, regionEntity: regionEntity);
+
+    if (result.isLeft()) {
+      {"date": date, "time": time} =
+          DateTimeHelper.adjustTime(date: date, time: time, offsetMinutes: -1);
+
+      return await weatherRepository.getWeatherT1H(
+          date: date, time: time, regionEntity: regionEntity);
+    }
+    return result;
   }
 }

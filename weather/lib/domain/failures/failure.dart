@@ -11,3 +11,11 @@ class ServerFailure extends Failure {
 class LocationFailure extends Failure {
   LocationFailure({required String message}) : super(message);
 }
+
+class NormalFailure extends Failure {
+  NormalFailure({required String message}) : super(message);
+}
+
+class NoDataFailure extends Failure {
+  NoDataFailure({required String message}) : super(message);
+}

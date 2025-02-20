@@ -18,12 +18,24 @@ class WeatherRepositoryImpl implements WeatherRepository {
       required String time,
       required RegionEntity regionEntity}) async {
     try {
-      final data = await weatherRemoteDataSource.getCurrentWeather(
-          baseDate: date, baseTime: time, regionEntity: regionEntity);
+      Map<String, dynamic> data =
+          await weatherRemoteDataSource.getCurrentWeather(
+              baseDate: date, baseTime: time, regionEntity: regionEntity);
+
+      if (!isDataAvailable(data)) {
+        return Left(
+            NoDataFailure(message: data["response"]["header"]["resultMsg"]));
+      }
 
       return Right(WeatherEntity.fromJson(data));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
+    } catch (e) {
+      return Left(NormalFailure(message: e.toString()));
     }
+  }
+
+  bool isDataAvailable(Map<String, dynamic> data) {
+    return data["response"]["header"]["resultCode"] == "00";
   }
 }

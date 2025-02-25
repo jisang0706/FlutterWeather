@@ -18,8 +18,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Weather',
-        theme: ThemeData.light(),
-        darkTheme: ThemeData.dark(),
+        theme:
+            ThemeData(fontFamily: 'Pretendard', brightness: Brightness.light),
+        darkTheme:
+            ThemeData(fontFamily: 'Pretendard', brightness: Brightness.dark),
         themeMode: ThemeMode.system,
         home: const MyHomePage(title: 'Weather'));
   }
@@ -55,7 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Padding(
         padding: const EdgeInsets.all(16.8),
         child: Text(weatherInfo,
-            textAlign: TextAlign.center, style: const TextStyle(fontSize: 18)),
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
       )),
     );
   }

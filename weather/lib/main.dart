@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:weather/core/dependency_injection.dart';
-import 'package:weather/domain/entities/address_entity.dart';
-import 'package:weather/domain/usecase/get_address_usecase.dart';
-import 'package:weather/domain/usecase/get_region_by_code_usecase.dart';
-import 'package:weather/domain/usecase/get_weather_usecase.dart';
+import 'package:weather/presentation/pages/weather_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
+  await initializeDateFormatting("ko_KR");
   runApp(const MyApp());
 }
 
@@ -23,64 +22,6 @@ class MyApp extends StatelessWidget {
         darkTheme:
             ThemeData(fontFamily: 'Pretendard', brightness: Brightness.dark),
         themeMode: ThemeMode.system,
-        home: const MyHomePage(title: 'Weather'));
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  String weatherInfo = "날씨 정보를 불러오는 중";
-  String appBarText = "날씨";
-  final getAddressUsecase = GetIt.instance<GetAddressUsecase>();
-  final getWeatherUseCase = GetIt.instance<GetWeatherUsecase>();
-  final getRegionByNameUsecase = GetIt.instance<GetRegionByCodeUsecase>();
-
-  @override
-  void initState() {
-    super.initState();
-    fetchWeather();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(appBarText)),
-      body: Center(
-          child: Padding(
-        padding: const EdgeInsets.all(16.8),
-        child: Text(weatherInfo,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-      )),
-    );
-  }
-
-  // 날씨 정보 weatherInfo에 넣고 UI업데이트
-  Future<void> fetchWeather() async {
-    // 역지오코딩 호출
-    final address = await getAddressUsecase.execute();
-
-    setState(() {
-      appBarText = address.fold(
-          (failure) => "서울특별시 날씨", (address) => "${address.region3Depth} 날씨");
-    });
-
-    final regionEntity = await getRegionByNameUsecase
-        .execute(address.getOrElse(() => AddressEntity.emptyEntity()));
-
-    final weather = await getWeatherUseCase.execute(regionEntity);
-
-    setState(() {
-      weatherInfo = weather.fold((failure) => "error: ${failure.message}",
-          (result) => "${result.t1h} 도");
-    });
+        home: const WeatherScreen());
   }
 }

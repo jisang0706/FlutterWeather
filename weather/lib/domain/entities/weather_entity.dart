@@ -1,4 +1,6 @@
 // 날씨 엔티티
+import 'package:weather/core/utils/date_time_helper.dart';
+
 class WeatherEntity {
   final double t1h; // 기온
   final double rn1; // 1시간 강수량
@@ -8,16 +10,19 @@ class WeatherEntity {
   final double pty; // 강수형태
   final double vec; // 풍향
   final double wsd; // 풍속
+  final String dateTime;
 
-  WeatherEntity(
-      {required this.t1h,
-      required this.rn1,
-      required this.uuu,
-      required this.vvv,
-      required this.reh,
-      required this.pty,
-      required this.vec,
-      required this.wsd});
+  WeatherEntity({
+    required this.t1h,
+    required this.rn1,
+    required this.uuu,
+    required this.vvv,
+    required this.reh,
+    required this.pty,
+    required this.vec,
+    required this.wsd,
+    required this.dateTime,
+  });
 
   factory WeatherEntity.fromJson(Map<String, dynamic> json) {
     final items = json["response"]["body"]["items"]["item"] as List;
@@ -35,6 +40,8 @@ class WeatherEntity {
         reh: weatherMap["REF"] ?? 0,
         pty: weatherMap["PTY"] ?? 0,
         vec: weatherMap["VEC"] ?? 0,
-        wsd: weatherMap["WSD"] ?? 0);
+        wsd: weatherMap["WSD"] ?? 0,
+        dateTime: DateTimeHelper.formatToReadable(
+            date: items.first["baseDate"], time: items.first["baseTime"]));
   }
 }

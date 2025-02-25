@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class DateTimeHelper {
   static String getCurrentDate() {
     final now = DateTime.now();
@@ -18,6 +20,14 @@ class DateTimeHelper {
     dateTime = dateTime.add(Duration(hours: offsetMinutes));
 
     return {"date": dateFormat(dateTime), "time": timeFormat(dateTime)};
+  }
+
+  // datetime 포멧 변경
+  static String formatToReadable({required String date, required String time}) {
+    DateTime dateTime = DateTime.parse("$date $time");
+    final DateFormat formatter = DateFormat("M월 d일\na h시", "ko_KR");
+
+    return formatter.format(dateTime);
   }
 
   static String dateFormat(DateTime dateTime) {

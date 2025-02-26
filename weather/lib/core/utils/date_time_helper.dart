@@ -11,6 +11,10 @@ class DateTimeHelper {
     return timeFormat(now);
   }
 
+  static DateTime getCurrentDateTime() {
+    return DateTime.now();
+  }
+
   // 시간 +-
   static Map<String, String> adjustTime(
       {required String date,
@@ -20,6 +24,13 @@ class DateTimeHelper {
     dateTime = dateTime.add(Duration(hours: offsetMinutes));
 
     return {"date": dateFormat(dateTime), "time": timeFormat(dateTime)};
+  }
+
+  // 날짜 +-
+  static DateTime adjustDay(
+      {required DateTime dateTime, required int offsetDay}) {
+    dateTime = dateTime.add(Duration(days: offsetDay));
+    return dateTime;
   }
 
   // datetime 포멧 변경

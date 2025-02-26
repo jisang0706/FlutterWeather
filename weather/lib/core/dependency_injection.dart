@@ -7,11 +7,14 @@ import 'package:weather/data/datasources/weather_remote_data_source.dart';
 import 'package:weather/data/repository/address_repository_impl.dart';
 import 'package:weather/data/repository/location_repository_impl.dart';
 import 'package:weather/data/repository/region_repository_impl.dart';
+import 'package:weather/data/repository/sun_repository_impl.dart';
 import 'package:weather/data/repository/weather_repository_impl.dart';
 import 'package:weather/domain/repositories/address_repository.dart';
 import 'package:weather/domain/repositories/location_repository.dart';
 import 'package:weather/domain/repositories/region_repository.dart';
+import 'package:weather/domain/repositories/sun_repository.dart';
 import 'package:weather/domain/repositories/weather_repository.dart';
+import 'package:weather/domain/usecase/calculate_sun_times_usecase.dart';
 import 'package:weather/domain/usecase/get_address_usecase.dart';
 import 'package:weather/domain/usecase/get_current_location_usecase.dart';
 import 'package:weather/domain/usecase/get_region_by_code_usecase.dart';
@@ -53,4 +56,9 @@ void setupLocator() {
       () => RegionRepositoryImpl(regionDataSource: getIt<RegionDataSource>()));
   getIt.registerLazySingleton<GetRegionByCodeUsecase>(() =>
       GetRegionByCodeUsecase(regionRepository: getIt<RegionRepository>()));
+
+  // SunTimes
+  getIt.registerLazySingleton<SunRepository>(() => SunRepositoryImpl());
+  getIt.registerLazySingleton<CalculateSunTimesUsecase>(
+      () => CalculateSunTimesUsecase(sunRepository: getIt<SunRepository>()));
 }

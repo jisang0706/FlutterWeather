@@ -1,4 +1,10 @@
-// 메인 페이지 이벤트
-abstract class WeatherEvent {}
+import 'package:weather/domain/entities/address_entity.dart';
+import 'package:weather/presentation/blocs/base_event.dart';
 
-class FetchWeather extends WeatherEvent {}
+abstract class WeatherEvent extends BaseEvent {}
+
+class FetchWeather extends WeatherEvent {
+  AddressEntity address;
+
+  FetchWeather({required this.address});
+}

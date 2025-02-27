@@ -9,9 +9,9 @@ import 'package:weather/domain/usecase/get_address_usecase.dart';
 import 'package:weather/domain/usecase/get_current_location_usecase.dart';
 import 'package:weather/domain/usecase/get_region_by_code_usecase.dart';
 import 'package:weather/domain/usecase/get_weather_usecase.dart';
-import 'package:weather/presentation/blocs/weather_bloc.dart';
-import 'package:weather/presentation/blocs/weather_event.dart';
-import 'package:weather/presentation/pages/weather_screen.dart';
+import 'package:weather/presentation/blocs/base_event.dart';
+import 'package:weather/presentation/blocs/base_bloc.dart';
+import 'package:weather/presentation/pages/base_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +24,7 @@ void main() async {
   });
   runApp(MultiBlocProvider(providers: [
     BlocProvider(
-        create: (_) => WeatherBloc(
+        create: (_) => BaseBloc(
             getCurrentLocationUsecase:
                 GetIt.instance<GetCurrentLocationUsecase>(),
             getAddressUsecase: GetIt.instance<GetAddressUsecase>(),
@@ -32,7 +32,7 @@ void main() async {
             getRegionByCodeUsecase: GetIt.instance<GetRegionByCodeUsecase>(),
             calculateSunTimesUsecase:
                 GetIt.instance<CalculateSunTimesUsecase>())
-          ..add(FetchWeather()))
+          ..add(FetchBase()))
   ], child: const MyApp()));
 }
 
@@ -47,6 +47,6 @@ class MyApp extends StatelessWidget {
         darkTheme:
             ThemeData(fontFamily: 'Pretendard', brightness: Brightness.dark),
         themeMode: ThemeMode.system,
-        home: const WeatherScreen());
+        home: const BaseScreen());
   }
 }

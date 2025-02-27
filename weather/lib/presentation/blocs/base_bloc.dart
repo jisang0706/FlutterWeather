@@ -10,46 +10,85 @@ import 'package:weather/domain/usecase/get_address_usecase.dart';
 import 'package:weather/domain/usecase/get_current_location_usecase.dart';
 import 'package:weather/domain/usecase/get_region_by_code_usecase.dart';
 import 'package:weather/domain/usecase/get_weather_usecase.dart';
+import 'package:weather/presentation/blocs/base_event.dart';
+import 'package:weather/presentation/blocs/base_state.dart';
+import 'package:weather/presentation/blocs/location_event.dart';
+import 'package:weather/presentation/blocs/location_state.dart';
+import 'package:weather/presentation/blocs/sun_times_event.dart';
+import 'package:weather/presentation/blocs/sun_times_state.dart';
 import 'package:weather/presentation/blocs/weather_event.dart';
 import 'package:weather/presentation/blocs/weather_state.dart';
 
 // 메인 페이지 bloc
-class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
+class BaseBloc extends Bloc<BaseEvent, BaseState> {
   final GetCurrentLocationUsecase getCurrentLocationUsecase;
   final GetAddressUsecase getAddressUsecase;
   final GetWeatherUsecase getWeatherUsecase;
   final GetRegionByCodeUsecase getRegionByCodeUsecase;
   final CalculateSunTimesUsecase calculateSunTimesUsecase;
 
-  WeatherBloc(
+  BaseBloc(
       {required this.getCurrentLocationUsecase,
       required this.getAddressUsecase,
       required this.getWeatherUsecase,
       required this.getRegionByCodeUsecase,
       required this.calculateSunTimesUsecase})
-      : super(WeatherLoading()) {
+      : super(BaseLoading()) {
+    on<FetchBase>(_fetchBase);
+    on<FetchLocation>(_fetchLocation);
+    on<FetchSunTimes>(_fetchSunTimes);
     on<FetchWeather>(_fetchWeather);
   }
 
-  Future<void> _fetchWeather(
-      FetchWeather event, Emitter<WeatherState> emit) async {
-    emit(WeatherLoading());
+  Future<void> _fetchBase(FetchBase event, Emitter<BaseState> emit) async {
+    emit(BaseLoading());
+
+    add(FetchLocation());
+  }
+
+  Future<void> _fetchLocation(
+      FetchLocation event, Emitter<BaseState> emit) async {
+    emit(LocationLoading());
 
     try {
       final position = await _getCurrentPosition();
       final address = await _getAddressFromPosition(position);
-      final regionEntity = await _getRegionEntity(address);
+
+      emit(LocationLoaded(region: address.region3Depth));
+
+      add(FetchSunTimes(position: position));
+      add(FetchWeather(address: address));
+    } catch (e) {
+      emit(LocationError(message: e.toString()));
+    }
+  }
+
+  Future<void> _fetchSunTimes(
+      FetchSunTimes event, Emitter<BaseState> emit) async {
+    emit(SunTimesLoading());
+
+    try {
       final now = DateTimeHelper.getCurrentDateTime();
+      final sunTimes = await _getSunTimes(event.position, now);
+
+      emit(SunTimesLoaded(now: now, sunrise: sunTimes.$1, sunset: sunTimes.$2));
+    } catch (e) {
+      emit(SunTimesError(message: e.toString()));
+    }
+  }
+
+  Future<void> _fetchWeather(
+      FetchWeather event, Emitter<BaseState> emit) async {
+    emit(WeatherLoading());
+
+    try {
+      final regionEntity = await _getRegionEntity(event.address);
       final weather = await _getWeatherInfo(regionEntity);
-      final sunTimes = await _getSunTimes(position, now);
 
       emit(WeatherLoaded(
-          dateTime: weather.dateTime,
-          region: address.region3Depth,
-          temperature: "${weather.t1h}",
-          now: now,
-          sunrise: sunTimes.$1,
-          sunset: sunTimes.$2));
+        dateTime: weather.dateTime,
+        temperature: "${weather.t1h}",
+      ));
     } catch (e) {
       emit(WeatherError(message: e.toString()));
     }

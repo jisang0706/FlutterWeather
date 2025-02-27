@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+// 배경 선택
 class BackgroundPickHelper {
   static Color determineBackgroundColor(
       {required DateTime now,

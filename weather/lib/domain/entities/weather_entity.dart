@@ -44,4 +44,18 @@ class WeatherEntity {
         dateTime: DateTimeHelper.formatToReadable(
             date: items.first["baseDate"], time: items.first["baseTime"]));
   }
+
+  factory WeatherEntity.emptyEntity() {
+    return WeatherEntity(
+        t1h: 0,
+        rn1: 0,
+        uuu: 0,
+        vvv: 0,
+        reh: 0,
+        pty: 0,
+        vec: 0,
+        wsd: 0,
+        dateTime:
+            DateTimeHelper.formatToReadable(date: "00000000", time: "0000"));
+  }
 }

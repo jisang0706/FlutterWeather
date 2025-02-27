@@ -1,11 +1,9 @@
-import 'dart:ui';
-
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:weather/core/utils/date_time_helper.dart';
 import 'package:weather/domain/entities/address_entity.dart';
+import 'package:weather/domain/entities/region_entity.dart';
+import 'package:weather/domain/entities/weather_entity.dart';
 import 'package:weather/domain/failures/failure.dart';
 import 'package:weather/domain/usecase/calculate_sun_times_usecase.dart';
 import 'package:weather/domain/usecase/get_address_usecase.dart';
@@ -17,13 +15,19 @@ import 'package:weather/presentation/blocs/weather_state.dart';
 
 // 메인 페이지 bloc
 class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
-  final getCurrentLocationUsecase = GetIt.instance<GetCurrentLocationUsecase>();
-  final getAddressUsecase = GetIt.instance<GetAddressUsecase>();
-  final getWeatherUsecase = GetIt.instance<GetWeatherUsecase>();
-  final getRegionByCodeUsecase = GetIt.instance<GetRegionByCodeUsecase>();
-  final calculateSunTimesUsecase = GetIt.instance<CalculateSunTimesUsecase>();
+  final GetCurrentLocationUsecase getCurrentLocationUsecase;
+  final GetAddressUsecase getAddressUsecase;
+  final GetWeatherUsecase getWeatherUsecase;
+  final GetRegionByCodeUsecase getRegionByCodeUsecase;
+  final CalculateSunTimesUsecase calculateSunTimesUsecase;
 
-  WeatherBloc() : super(WeatherLoading()) {
+  WeatherBloc(
+      {required this.getCurrentLocationUsecase,
+      required this.getAddressUsecase,
+      required this.getWeatherUsecase,
+      required this.getRegionByCodeUsecase,
+      required this.calculateSunTimesUsecase})
+      : super(WeatherLoading()) {
     on<FetchWeather>(_fetchWeather);
   }
 
@@ -32,73 +36,64 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
     emit(WeatherLoading());
 
     try {
-      final position = await getCurrentLocationUsecase.execute();
-      final Either<Failure, AddressEntity> address = await position.fold(
-          (failure) => Left(failure),
-          (position) => getAddressUsecase.execute(position));
-      final region =
-          address.fold((failure) => "서울특별시", (address) => address.region3Depth);
-
-      final regionEntity = await getRegionByCodeUsecase
-          .execute(address.getOrElse(() => AddressEntity.emptyEntity()));
-
-      var now = DateTimeHelper.getCurrentDateTime();
-      final sunrise = await position.fold(
-          (failure) =>
-              calculateSunTimesUsecase.getSunriseTime(37.5665, 126.9780, now),
-          (position) => calculateSunTimesUsecase.getSunriseTime(
-              position.latitude, position.longitude, now));
-      final sunset = await position.fold(
-          (failure) =>
-              calculateSunTimesUsecase.getSunsetTime(37.5665, 126.9780, now),
-          (position) => calculateSunTimesUsecase.getSunsetTime(
-              position.latitude, position.longitude, now));
-
-      final weather = await getWeatherUsecase.execute(regionEntity);
-      final temperature = weather.fold((failure) => "error: ${failure.message}",
-          (result) => "${result.t1h}°");
-      final dateTime =
-          weather.fold((failure) => "", (result) => result.dateTime);
-      final backgroundColor = _determineBackgroundColor(now, sunrise, sunset);
+      final position = await _getCurrentPosition();
+      final address = await _getAddressFromPosition(position);
+      final regionEntity = await _getRegionEntity(address);
+      final now = DateTimeHelper.getCurrentDateTime();
+      final weather = await _getWeatherInfo(regionEntity);
+      final sunTimes = await _getSunTimes(position, now);
 
       emit(WeatherLoaded(
-          dateTime: dateTime,
-          region: region,
-          temperature: temperature,
-          backgroundColor: backgroundColor));
+          dateTime: weather.dateTime,
+          region: address.region3Depth,
+          temperature: "${weather.t1h}",
+          now: now,
+          sunrise: sunTimes.$1,
+          sunset: sunTimes.$2));
     } catch (e) {
       emit(WeatherError(message: e.toString()));
     }
   }
 
-  Color _determineBackgroundColor(
-      DateTime now, DateTime sunrise, DateTime sunset) {
-    final beforeSunrise = sunrise.subtract(const Duration(hours: 1));
-    final afterSunrise = sunrise.add(const Duration(hours: 1));
-    final beforeSunset = sunset.subtract(const Duration(hours: 1));
-    final afterSunset = sunset.add(const Duration(minutes: 30));
+  // 현재 좌표
+  Future<Either<Failure, dynamic>> _getCurrentPosition() async {
+    return await getCurrentLocationUsecase.execute();
+  }
 
-    if (now.isBefore(beforeSunrise)) {
-      // 한밤중 (일출 1시간 전까지)
-      return const Color.fromARGB(255, 21, 3, 51);
-    } else if (now.isBefore(sunrise)) {
-      // 일출 직전 (~1시간 전)
-      return Colors.indigo.shade700;
-    } else if (now.isBefore(afterSunrise)) {
-      // 일출 직후 (~1시간 후)
-      return Colors.orangeAccent;
-    } else if (now.isBefore(beforeSunset)) {
-      // 낮 (오전~오후)
-      return Colors.lightBlueAccent;
-    } else if (now.isBefore(sunset)) {
-      // 일몰 직전 (~1시간 전)
-      return Colors.orangeAccent;
-    } else if (now.isBefore(afterSunset)) {
-      // 일몰 직후 (~1시간 후)
-      return Colors.deepOrangeAccent;
-    } else {
-      // 밤 (일몰 1시간 후부터 다음날 일출 1시간 전까지)
-      return const Color.fromARGB(255, 21, 3, 51);
-    }
+  // 현재 주소
+  Future<AddressEntity> _getAddressFromPosition(
+      Either<Failure, dynamic> position) async {
+    final Either<Failure, AddressEntity> addressResult = await position.fold(
+        (failure) => Left(failure),
+        (position) => getAddressUsecase.execute(position));
+    return addressResult.getOrElse(() => AddressEntity.emptyEntity());
+  }
+
+  // 주소 코드
+  Future<RegionEntity> _getRegionEntity(AddressEntity address) async {
+    return await getRegionByCodeUsecase.execute(address);
+  }
+
+  // 일출, 일몰시간
+  Future<(DateTime, DateTime)> _getSunTimes(
+      Either<Failure, dynamic> position, DateTime now) async {
+    final sunrise = await position.fold(
+        (failure) =>
+            calculateSunTimesUsecase.getSunriseTime(37.5665, 126.9780, now),
+        (position) => calculateSunTimesUsecase.getSunriseTime(
+            position.latitude, position.longitude, now));
+    final sunset = await position.fold(
+        (failure) =>
+            calculateSunTimesUsecase.getSunsetTime(37.5665, 126.9780, now),
+        (position) => calculateSunTimesUsecase.getSunsetTime(
+            position.latitude, position.longitude, now));
+
+    return (sunrise, sunset);
+  }
+
+  // 날씨
+  Future<WeatherEntity> _getWeatherInfo(RegionEntity regionEntity) async {
+    final weatherResult = await getWeatherUsecase.execute(regionEntity);
+    return weatherResult.getOrElse(() => WeatherEntity.emptyEntity());
   }
 }

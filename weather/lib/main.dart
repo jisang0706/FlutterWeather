@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:logging/logging.dart';
 import 'package:weather/core/dependency_injection.dart';
+import 'package:weather/domain/usecase/calculate_sun_times_usecase.dart';
+import 'package:weather/domain/usecase/get_address_usecase.dart';
+import 'package:weather/domain/usecase/get_current_location_usecase.dart';
+import 'package:weather/domain/usecase/get_region_by_code_usecase.dart';
+import 'package:weather/domain/usecase/get_weather_usecase.dart';
+import 'package:weather/presentation/blocs/weather_bloc.dart';
+import 'package:weather/presentation/blocs/weather_event.dart';
 import 'package:weather/presentation/pages/weather_screen.dart';
 
 void main() async {
@@ -13,7 +22,18 @@ void main() async {
     print(
         '${record.time}: [${record.level}] ${record.loggerName}: ${record.message}');
   });
-  runApp(const MyApp());
+  runApp(MultiBlocProvider(providers: [
+    BlocProvider(
+        create: (_) => WeatherBloc(
+            getCurrentLocationUsecase:
+                GetIt.instance<GetCurrentLocationUsecase>(),
+            getAddressUsecase: GetIt.instance<GetAddressUsecase>(),
+            getWeatherUsecase: GetIt.instance<GetWeatherUsecase>(),
+            getRegionByCodeUsecase: GetIt.instance<GetRegionByCodeUsecase>(),
+            calculateSunTimesUsecase:
+                GetIt.instance<CalculateSunTimesUsecase>())
+          ..add(FetchWeather()))
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

@@ -10,7 +10,7 @@ class WeatherEntity {
   final double pty; // 강수형태
   final double vec; // 풍향
   final double wsd; // 풍속
-  final String dateTime;
+  final String time;
 
   WeatherEntity({
     required this.t1h,
@@ -21,7 +21,7 @@ class WeatherEntity {
     required this.pty,
     required this.vec,
     required this.wsd,
-    required this.dateTime,
+    required this.time,
   });
 
   factory WeatherEntity.fromJson(Map<String, dynamic> json) {
@@ -41,8 +41,7 @@ class WeatherEntity {
         pty: weatherMap["PTY"] ?? 0,
         vec: weatherMap["VEC"] ?? 0,
         wsd: weatherMap["WSD"] ?? 0,
-        dateTime: DateTimeHelper.formatToReadable(
-            date: items.first["baseDate"], time: items.first["baseTime"]));
+        time: DateTimeHelper.timeToReadable(time: items.first["baseTime"]));
   }
 
   factory WeatherEntity.emptyEntity() {
@@ -55,7 +54,6 @@ class WeatherEntity {
         pty: 0,
         vec: 0,
         wsd: 0,
-        dateTime:
-            DateTimeHelper.formatToReadable(date: "00000000", time: "0000"));
+        time: DateTimeHelper.timeToReadable(time: "0000"));
   }
 }

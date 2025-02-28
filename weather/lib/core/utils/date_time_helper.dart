@@ -41,6 +41,11 @@ class DateTimeHelper {
     return formatter.format(dateTime);
   }
 
+  static String timeToReadable({required String time}) {
+    int hour = int.parse(time.substring(0, 2));
+    return "${hour < 12 ? "오전" : "오후"} ${hour % 12 == 0 ? 12 : hour % 12}시";
+  }
+
   static String dateFormat(DateTime dateTime) {
     return "${dateTime.year}${_twoDigits(dateTime.month)}${_twoDigits(dateTime.day)}";
   }

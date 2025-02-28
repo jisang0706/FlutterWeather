@@ -86,7 +86,7 @@ class BaseBloc extends Bloc<BaseEvent, BaseState> {
       final weather = await _getWeatherInfo(regionEntity);
 
       emit(WeatherLoaded(
-        dateTime: weather.dateTime,
+        dateTime: weather.time,
         temperature: "${weather.t1h}",
       ));
     } catch (e) {

@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:weather/core/utils/date_time_helper.dart';
 import 'package:weather/domain/entities/region_entity.dart';
+import 'package:weather/domain/entities/short_forecast_entity.dart';
 import 'package:weather/domain/entities/weather_entity.dart';
 import 'package:weather/domain/failures/failure.dart';
 import 'package:weather/domain/repositories/weather_repository.dart';
@@ -11,20 +12,31 @@ class GetWeatherUsecase {
 
   GetWeatherUsecase({required this.weatherRepository});
 
-  Future<Either<Failure, WeatherEntity>> execute(
+  // 현재 날씨
+  Future<Either<Failure, WeatherEntity>> getWeather(
       RegionEntity regionEntity) async {
-    String date = DateTimeHelper.getCurrentDate();
-    String time = DateTimeHelper.getCurrentTime();
+    DateTime dateTime = DateTimeHelper.getCurrentDateTime();
+    String date = DateTimeHelper.dateFormat(dateTime);
+    String time = DateTimeHelper.timeFormat(dateTime);
 
     if (int.parse(time.substring(0, 2)) < 10) {
-      final adjusted = DateTimeHelper.adjustTime(
-          dateTime: DateTimeHelper.stringToDateTime(date: date, time: time),
-          offsetMinutes: -1);
+      final adjusted =
+          DateTimeHelper.adjustTime(dateTime: dateTime, offsetMinutes: -1);
       {"date": date, "time": time} =
           DateTimeHelper.dateTimeToString(dateTime: adjusted);
     }
 
     return weatherRepository.getWeatherT1H(
         date: date, time: time, regionEntity: regionEntity);
+  }
+
+  // 단기 예보
+  Future<Either<Failure, ShortForecastEntity>> getShortForecase(
+      {required RegionEntity regionEntity, required int pageNo}) async {
+    DateTime yesterday = DateTimeHelper.adjustDay(
+        dateTime: DateTimeHelper.getCurrentDateTime(), offsetDay: -1);
+
+    return weatherRepository.getShortForecase(
+        dateTime: yesterday, regionEntity: regionEntity, pageNo: pageNo);
   }
 }

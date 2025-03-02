@@ -1,8 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
+import 'package:logging/logging.dart';
 import 'package:weather/core/utils/date_time_helper.dart';
 import 'package:weather/domain/entities/address_entity.dart';
 import 'package:weather/domain/entities/region_entity.dart';
+import 'package:weather/domain/entities/short_forecast_entity.dart';
 import 'package:weather/domain/entities/weather_entity.dart';
 import 'package:weather/domain/failures/failure.dart';
 import 'package:weather/domain/usecase/calculate_sun_times_usecase.dart';
@@ -83,6 +85,7 @@ class BaseBloc extends Bloc<BaseEvent, BaseState> {
 
     try {
       final regionEntity = await _getRegionEntity(event.address);
+      _temp(regionEntity);
       final weather = await _getWeatherInfo(regionEntity);
 
       emit(WeatherLoaded(
@@ -92,6 +95,15 @@ class BaseBloc extends Bloc<BaseEvent, BaseState> {
     } catch (e) {
       emit(WeatherError(message: e.toString()));
     }
+  }
+
+  // 임시 하드코딩
+  void _temp(RegionEntity regionEntity) async {
+    final shortForecast =
+        await _getShortForecaseInfo(regionEntity: regionEntity, pageNo: 2);
+
+    var logger = Logger('SHORTFORECASE');
+    logger.info("${shortForecast.tmn}, ${shortForecast.tmx}");
   }
 
   // 현재 좌표
@@ -130,9 +142,18 @@ class BaseBloc extends Bloc<BaseEvent, BaseState> {
     return (sunrise, sunset);
   }
 
-  // 날씨
+  // 현재 날씨
   Future<WeatherEntity> _getWeatherInfo(RegionEntity regionEntity) async {
-    final weatherResult = await getWeatherUsecase.execute(regionEntity);
+    final weatherResult = await getWeatherUsecase.getWeather(regionEntity);
     return weatherResult.getOrElse(() => WeatherEntity.emptyEntity());
+  }
+
+  // 단기예보
+  Future<ShortForecastEntity> _getShortForecaseInfo(
+      {required RegionEntity regionEntity, required int pageNo}) async {
+    final shortForecastResult = await getWeatherUsecase.getShortForecase(
+        regionEntity: regionEntity, pageNo: pageNo);
+    return shortForecastResult
+        .getOrElse(() => ShortForecastEntity.emptyEntity());
   }
 }

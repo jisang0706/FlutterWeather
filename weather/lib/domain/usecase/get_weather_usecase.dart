@@ -17,10 +17,11 @@ class GetWeatherUsecase {
     String time = DateTimeHelper.getCurrentTime();
 
     if (int.parse(time.substring(0, 2)) < 10) {
-      final adjusted =
-          DateTimeHelper.adjustTime(date: date, time: time, offsetMinutes: -1);
-      date = adjusted["date"]!;
-      time = adjusted["time"]!;
+      final adjusted = DateTimeHelper.adjustTime(
+          dateTime: DateTimeHelper.stringToDateTime(date: date, time: time),
+          offsetMinutes: -1);
+      {"date": date, "time": time} =
+          DateTimeHelper.dateTimeToString(dateTime: adjusted);
     }
 
     return weatherRepository.getWeatherT1H(

@@ -15,22 +15,25 @@ class DateTimeHelper {
     return DateTime.now();
   }
 
-  // 시간 +-
-  static Map<String, String> adjustTime(
-      {required String date,
-      required String time,
-      required int offsetMinutes}) {
-    DateTime dateTime = DateTime.parse("$date $time");
-    dateTime = dateTime.add(Duration(hours: offsetMinutes));
+  static DateTime stringToDateTime(
+      {required String date, required String time}) {
+    return DateTime.parse("$date $time");
+  }
 
+  static Map<String, String> dateTimeToString({required DateTime dateTime}) {
     return {"date": dateFormat(dateTime), "time": timeFormat(dateTime)};
+  }
+
+  // 시간 +-
+  static DateTime adjustTime(
+      {required DateTime dateTime, required int offsetMinutes}) {
+    return dateTime.add(Duration(hours: offsetMinutes));
   }
 
   // 날짜 +-
   static DateTime adjustDay(
       {required DateTime dateTime, required int offsetDay}) {
-    dateTime = dateTime.add(Duration(days: offsetDay));
-    return dateTime;
+    return dateTime.add(Duration(days: offsetDay));
   }
 
   // datetime 포멧 변경

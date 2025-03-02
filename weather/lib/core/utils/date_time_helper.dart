@@ -36,6 +36,15 @@ class DateTimeHelper {
     return dateTime.add(Duration(days: offsetDay));
   }
 
+  // 날짜 차이
+  static int calculateDayDiffrence(
+      {required DateTime from, required DateTime to}) {
+    final fromDate = DateTime(from.year, from.month, from.day);
+    final toDate = DateTime(to.year, to.month, to.day);
+
+    return toDate.difference(fromDate).inDays;
+  }
+
   // datetime 포멧 변경
   static String formatToReadable({required String date, required String time}) {
     DateTime dateTime = DateTime.parse("$date $time");
@@ -47,6 +56,10 @@ class DateTimeHelper {
   static String timeToReadable({required String time}) {
     int hour = int.parse(time.substring(0, 2));
     return "${hour < 12 ? "오전" : "오후"} ${hour % 12 == 0 ? 12 : hour % 12}시";
+  }
+
+  static String dateToReadable({required DateTime dateTime}) {
+    return "${dateTime.month}.${dateTime.day}";
   }
 
   static String dateFormat(DateTime dateTime) {

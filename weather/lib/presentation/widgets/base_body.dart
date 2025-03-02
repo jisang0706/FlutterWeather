@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather/core/utils/date_time_helper.dart';
 import 'package:weather/presentation/blocs/base_bloc.dart';
 import 'package:weather/presentation/blocs/base_state.dart';
+import 'package:weather/presentation/blocs/location_state.dart';
 import 'package:weather/presentation/blocs/weather_state.dart';
+import 'package:weather/presentation/widgets/short_forecast_item.dart';
 
 // 메인 페이지 body
 class BaseBody extends StatelessWidget {
@@ -26,7 +29,25 @@ class BaseBody extends StatelessWidget {
                     return CircularProgressIndicator();
                   }
                 }),
-          ))
+          )),
+      Column(
+        children: List.generate(4, (index) {
+          return BlocBuilder<BaseBloc, BaseState>(
+            buildWhen: (previous, current) => current is LocationState,
+            builder: (context, state) {
+              if (state is LocationLoaded) {
+                return ShortForecastItem(
+                    regionEntity: state.regionEntity,
+                    dateTime: DateTimeHelper.adjustDay(
+                        dateTime: DateTimeHelper.getCurrentDateTime(),
+                        offsetDay: index));
+              } else {
+                return CircularProgressIndicator();
+              }
+            },
+          );
+        }),
+      )
     ]);
   }
 }

@@ -19,7 +19,7 @@ class GetWeatherUsecase {
     String date = DateTimeHelper.dateFormat(dateTime);
     String time = DateTimeHelper.timeFormat(dateTime);
 
-    if (int.parse(time.substring(0, 2)) < 10) {
+    if (int.parse(time.substring(2, 4)) < 10) {
       final adjusted =
           DateTimeHelper.adjustTime(dateTime: dateTime, offsetMinutes: -1);
       {"date": date, "time": time} =

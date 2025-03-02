@@ -12,19 +12,19 @@ class ShortForecastEntity {
   factory ShortForecastEntity.fromJson(Map<String, dynamic> json) {
     final items = json["response"]["body"]["items"]["item"] as List;
 
-    double tmn = 0, tmx = 0;
+    double? tmn, tmx;
 
     for (var item in items) {
-      if (item["category"] == "TMN") {
+      if (item["category"] == "TMN" && tmn == null) {
         tmn = double.tryParse(item["fcstValue"])!;
-      } else if (item["category"] == "TMX") {
+      } else if (item["category"] == "TMX" && tmx == null) {
         tmx = double.tryParse(item["fcstValue"])!;
       }
     }
 
     return ShortForecastEntity(
-        tmn: tmn,
-        tmx: tmx,
+        tmn: tmn ?? 0,
+        tmx: tmx ?? 0,
         dateTime: DateTimeHelper.stringToDateTime(
             date: items.first["fcstDate"], time: "0000"));
   }

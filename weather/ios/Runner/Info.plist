@@ -51,5 +51,14 @@
 
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>앱의 백그라운드 위치 권한</string>
+
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>앱이 항상 위치를 사용할 수 있도록 허용합니다.</string>
+
+	<key>NSAppTransportSecurity</key>
+	<dict>
+    	<key>NSAllowsArbitraryLoads</key>
+    	<true/>
+	</dict>
 </dict>
 </plist>

@@ -16,16 +16,14 @@ class GetWeatherUsecase {
     String date = DateTimeHelper.getCurrentDate();
     String time = DateTimeHelper.getCurrentTime();
 
-    var result = await weatherRepository.getWeatherT1H(
-        date: date, time: time, regionEntity: regionEntity);
-
-    if (result.isLeft()) {
-      {"date": date, "time": time} =
+    if (int.parse(time.substring(0, 2)) < 10) {
+      final adjusted =
           DateTimeHelper.adjustTime(date: date, time: time, offsetMinutes: -1);
-
-      return await weatherRepository.getWeatherT1H(
-          date: date, time: time, regionEntity: regionEntity);
+      date = adjusted["date"]!;
+      time = adjusted["time"]!;
     }
-    return result;
+
+    return weatherRepository.getWeatherT1H(
+        date: date, time: time, regionEntity: regionEntity);
   }
 }

@@ -6,6 +6,7 @@ class DioClient {
   static final DioClient _instance = DioClient._internal();
   late final Dio kakaoDio;
   late final Dio weatherDio;
+  late final Dio middleWeatherDio;
 
   factory DioClient() => _instance;
 
@@ -19,6 +20,12 @@ class DioClient {
 
     weatherDio = Dio(BaseOptions(
         baseUrl: Config.weatherBaseUrl,
+        connectTimeout: Duration(seconds: 10),
+        receiveTimeout: Duration(seconds: 10)))
+      ..interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
+
+    middleWeatherDio = Dio(BaseOptions(
+        baseUrl: Config.middleWeatherBaseUrl,
         connectTimeout: Duration(seconds: 10),
         receiveTimeout: Duration(seconds: 10)))
       ..interceptors.add(LogInterceptor(requestBody: true, responseBody: true));

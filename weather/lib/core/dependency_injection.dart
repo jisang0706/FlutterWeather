@@ -2,21 +2,29 @@ import 'package:get_it/get_it.dart';
 import 'package:weather/core/network/dio_client.dart';
 import 'package:weather/data/datasources/address_remote_data_source.dart';
 import 'package:weather/data/datasources/location_data_source.dart';
+import 'package:weather/data/datasources/middle_code_data_source.dart';
+import 'package:weather/data/datasources/middle_weather_remote_data_source.dart';
 import 'package:weather/data/datasources/region_data_source.dart';
 import 'package:weather/data/datasources/weather_remote_data_source.dart';
 import 'package:weather/data/repository/address_repository_impl.dart';
 import 'package:weather/data/repository/location_repository_impl.dart';
+import 'package:weather/data/repository/middle_code_repository_impl.dart';
+import 'package:weather/data/repository/middle_weather_repository_impl.dart';
 import 'package:weather/data/repository/region_repository_impl.dart';
 import 'package:weather/data/repository/sun_repository_impl.dart';
 import 'package:weather/data/repository/weather_repository_impl.dart';
 import 'package:weather/domain/repositories/address_repository.dart';
 import 'package:weather/domain/repositories/location_repository.dart';
+import 'package:weather/domain/repositories/middle_code_repository.dart';
+import 'package:weather/domain/repositories/middle_weather_repository.dart';
 import 'package:weather/domain/repositories/region_repository.dart';
 import 'package:weather/domain/repositories/sun_repository.dart';
 import 'package:weather/domain/repositories/weather_repository.dart';
 import 'package:weather/domain/usecase/calculate_sun_times_usecase.dart';
 import 'package:weather/domain/usecase/get_address_usecase.dart';
 import 'package:weather/domain/usecase/get_current_location_usecase.dart';
+import 'package:weather/domain/usecase/get_middle_code_by_name_usecase.dart';
+import 'package:weather/domain/usecase/get_middle_weather_usecase.dart';
 import 'package:weather/domain/usecase/get_region_by_code_usecase.dart';
 import 'package:weather/domain/usecase/get_weather_usecase.dart';
 
@@ -61,4 +69,25 @@ void setupLocator() {
   getIt.registerLazySingleton<SunRepository>(() => SunRepositoryImpl());
   getIt.registerLazySingleton<CalculateSunTimesUsecase>(
       () => CalculateSunTimesUsecase(sunRepository: getIt<SunRepository>()));
+
+  // MiddleCode
+  getIt.registerLazySingleton<MiddleCodeDataSource>(
+      () => MiddleCodeDataSource());
+  getIt.registerLazySingleton<MiddleCodeRepository>(() =>
+      MiddleCodeRepositoryImpl(
+          middleRegionDataSource: getIt<MiddleCodeDataSource>()));
+  getIt.registerLazySingleton<GetMiddleCodeByNameUsecase>(() =>
+      GetMiddleCodeByNameUsecase(
+          middleCodeRepository: getIt<MiddleCodeRepository>()));
+
+  // MiddleWeather
+  getIt.registerLazySingleton<MiddleWeatherRemoteDataSource>(() =>
+      MiddleWeatherRemoteDataSource(dio: getIt<DioClient>().middleWeatherDio));
+  getIt.registerLazySingleton<MiddleWeatherRepository>(() =>
+      MiddleWeatherRepositoryImpl(
+          middleWeatherRemoteDataSource:
+              getIt<MiddleWeatherRemoteDataSource>()));
+  getIt.registerLazySingleton<GetMiddleWeatherUsecase>(() =>
+      GetMiddleWeatherUsecase(
+          middleWeatherRepository: getIt<MiddleWeatherRepository>()));
 }

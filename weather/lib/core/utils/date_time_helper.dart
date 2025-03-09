@@ -26,8 +26,8 @@ class DateTimeHelper {
 
   // 시간 +-
   static DateTime adjustTime(
-      {required DateTime dateTime, required int offsetMinutes}) {
-    return dateTime.add(Duration(hours: offsetMinutes));
+      {required DateTime dateTime, required int offsetHours}) {
+    return dateTime.add(Duration(hours: offsetHours));
   }
 
   // 날짜 +-
@@ -43,6 +43,19 @@ class DateTimeHelper {
     final toDate = DateTime(to.year, to.month, to.day);
 
     return toDate.difference(fromDate).inDays;
+  }
+
+  // 중기예보에서 요구하는 시간으로 변경
+  static DateTime getMiddleFixedTime(DateTime dateTime) {
+    int hour = dateTime.hour;
+
+    if (hour < 6) {
+      return DateTime(dateTime.year, dateTime.month, dateTime.day - 1, 18, 0);
+    } else if (hour < 18) {
+      return DateTime(dateTime.year, dateTime.month, dateTime.day, 6, 0);
+    } else {
+      return DateTime(dateTime.year, dateTime.month, dateTime.day, 18, 0);
+    }
   }
 
   // datetime 포멧 변경

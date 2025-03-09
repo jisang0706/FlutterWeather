@@ -21,7 +21,7 @@ class GetWeatherUsecase {
 
     if (int.parse(time.substring(2, 4)) < 10) {
       final adjusted =
-          DateTimeHelper.adjustTime(dateTime: dateTime, offsetMinutes: -1);
+          DateTimeHelper.adjustTime(dateTime: dateTime, offsetHours: -1);
       {"date": date, "time": time} =
           DateTimeHelper.dateTimeToString(dateTime: adjusted);
     }
@@ -36,7 +36,7 @@ class GetWeatherUsecase {
     DateTime yesterday = DateTimeHelper.adjustDay(
         dateTime: DateTimeHelper.getCurrentDateTime(), offsetDay: -1);
 
-    return weatherRepository.getShortForecase(
+    return weatherRepository.getShortForecast(
         dateTime: yesterday, regionEntity: regionEntity, pageNo: pageNo);
   }
 }

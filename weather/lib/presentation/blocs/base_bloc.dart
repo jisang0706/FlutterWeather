@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:weather/core/utils/date_time_helper.dart';
+import 'package:weather/core/utils/log_helper.dart';
 import 'package:weather/domain/entities/address_entity.dart';
 import 'package:weather/domain/entities/region_entity.dart';
 import 'package:weather/domain/entities/weather_entity.dart';
@@ -8,6 +9,7 @@ import 'package:weather/domain/failures/failure.dart';
 import 'package:weather/domain/usecase/calculate_sun_times_usecase.dart';
 import 'package:weather/domain/usecase/get_address_usecase.dart';
 import 'package:weather/domain/usecase/get_current_location_usecase.dart';
+import 'package:weather/domain/usecase/get_middle_code_by_name_usecase.dart';
 import 'package:weather/domain/usecase/get_region_by_code_usecase.dart';
 import 'package:weather/domain/usecase/get_weather_usecase.dart';
 import 'package:weather/presentation/blocs/base_event.dart';
@@ -26,13 +28,15 @@ class BaseBloc extends Bloc<BaseEvent, BaseState> {
   final GetWeatherUsecase getWeatherUsecase;
   final GetRegionByCodeUsecase getRegionByCodeUsecase;
   final CalculateSunTimesUsecase calculateSunTimesUsecase;
+  final GetMiddleCodeByNameUsecase getMiddleCodeByNameUsecase;
 
   BaseBloc(
       {required this.getCurrentLocationUsecase,
       required this.getAddressUsecase,
       required this.getWeatherUsecase,
       required this.getRegionByCodeUsecase,
-      required this.calculateSunTimesUsecase})
+      required this.calculateSunTimesUsecase,
+      required this.getMiddleCodeByNameUsecase})
       : super(BaseLoading()) {
     on<FetchBase>(_fetchBase);
     on<FetchLocation>(_fetchLocation);
@@ -54,9 +58,14 @@ class BaseBloc extends Bloc<BaseEvent, BaseState> {
       final position = await _getCurrentPosition();
       final address = await _getAddressFromPosition(position);
       final regionEntity = await _getRegionEntity(address);
+      LogHelper.log("success regionEntity: $regionEntity");
+      final middleRegionId = await _getMiddleRegionIdFromName(address);
+      LogHelper.log("success middleRegionId: $middleRegionId");
 
       emit(LocationLoaded(
-          region: address.region3Depth, regionEntity: regionEntity));
+          region: address.region3Depth,
+          regionEntity: regionEntity,
+          middleRegionId: middleRegionId));
 
       add(FetchSunTimes(position: position));
       add(FetchWeather(regionEntity: regionEntity));
@@ -112,6 +121,15 @@ class BaseBloc extends Bloc<BaseEvent, BaseState> {
   // 주소 코드
   Future<RegionEntity> _getRegionEntity(AddressEntity address) async {
     return await getRegionByCodeUsecase.execute(address);
+  }
+
+  // 중기예보 지역 코드
+  Future<String> _getMiddleRegionIdFromName(AddressEntity address) async {
+    LogHelper.log("address: ${address.region1Depth}");
+    return await getMiddleCodeByNameUsecase.execute(
+        middleRegion: address.region1Depth.contains("도")
+            ? address.region2Depth
+            : address.region1Depth);
   }
 
   // 일출, 일몰시간

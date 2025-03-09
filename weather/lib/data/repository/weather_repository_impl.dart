@@ -39,7 +39,7 @@ class WeatherRepositoryImpl implements WeatherRepository {
 
   // 단기예보
   @override
-  Future<Either<Failure, ShortForecastEntity>> getShortForecase(
+  Future<Either<Failure, ShortForecastEntity>> getShortForecast(
       {required DateTime dateTime,
       required RegionEntity regionEntity,
       required int pageNo}) async {

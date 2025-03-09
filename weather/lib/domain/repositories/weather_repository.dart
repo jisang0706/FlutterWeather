@@ -11,7 +11,7 @@ abstract class WeatherRepository {
       required String time,
       required RegionEntity regionEntity});
 
-  Future<Either<Failure, ShortForecastEntity>> getShortForecase(
+  Future<Either<Failure, ShortForecastEntity>> getShortForecast(
       {required DateTime dateTime,
       required RegionEntity regionEntity,
       required int pageNo});

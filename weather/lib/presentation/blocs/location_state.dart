@@ -8,7 +8,12 @@ class LocationLoading extends LocationState {}
 class LocationLoaded extends LocationState {
   final String region;
   final RegionEntity regionEntity;
-  LocationLoaded({required this.region, required this.regionEntity});
+  final String middleRegionId;
+
+  LocationLoaded(
+      {required this.region,
+      required this.regionEntity,
+      required this.middleRegionId});
 }
 
 class LocationError extends LocationState {

@@ -97,7 +97,7 @@ class BaseBloc extends Bloc<BaseEvent, BaseState> {
 
       emit(WeatherLoaded(
         dateTime: weather.time,
-        temperature: "${weather.t1h}",
+        temperature: weather.t1h,
       ));
     } catch (e) {
       emit(WeatherError(message: e.toString()));

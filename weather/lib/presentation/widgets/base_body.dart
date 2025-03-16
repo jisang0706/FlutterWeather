@@ -23,8 +23,8 @@ class BaseBody extends StatelessWidget {
                 buildWhen: (previous, current) => current is WeatherState,
                 builder: (context, state) {
                   if (state is WeatherLoaded) {
-                    return Padding(padding: const EdgeInsets.only(left: 15, bottom: 40),
-                      child: Text("${state.temperature}°",
+                    return Padding(padding: const EdgeInsets.only(left: 15, bottom: 47),
+                      child: Text("${state.temperature % 1 == 0 ? state.temperature.toInt() : state.temperature}°",
                           style: const TextStyle(
                               fontSize: 50, fontWeight: FontWeight.bold)),);
 

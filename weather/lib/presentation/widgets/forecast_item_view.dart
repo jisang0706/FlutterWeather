@@ -28,14 +28,14 @@ class ForecastItemView extends StatelessWidget {
             ),
         const Spacer(),
         Text(
-          "$tmn°",
+          "${tmn % 1 == 0 ? tmn.toInt() : tmn}°",
           style: TextStyle(color: Colors.blue),
         ),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 5),
           child: const Text("/"),),
         Text(
-          "$tmx°",
-          style: TextStyle(color: Colors.red, fontSize: 16),
+          "${tmx % 1 == 0 ? tmx.toInt() : tmx}°",
+          style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ]),
     );

@@ -6,7 +6,7 @@ class WeatherLoading extends WeatherState {}
 
 class WeatherLoaded extends WeatherState {
   final String dateTime;
-  final String temperature;
+  final double temperature;
 
   WeatherLoaded({
     required this.dateTime,

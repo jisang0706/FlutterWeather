@@ -15,25 +15,25 @@ class BackgroundPickHelper {
 
     if (now.isBefore(beforeSunrise)) {
       // 한밤중 (일출 1시간 전까지)
-      return const Color.fromARGB(255, 21, 3, 51);
+      return const Color(0xFF0D1321);
     } else if (now.isBefore(sunrise)) {
       // 일출 직전 (~1시간 전)
-      return Colors.indigo.shade700;
+      return Color(0xFF3D348B);
     } else if (now.isBefore(afterSunrise)) {
       // 일출 직후 (~1시간 후)
-      return Colors.orangeAccent;
+      return Color(0xFFFFA837);
     } else if (now.isBefore(beforeSunset)) {
       // 낮 (오전~오후)
-      return Colors.lightBlueAccent;
+      return Color(0xFF90E0EF);
     } else if (now.isBefore(sunset)) {
       // 일몰 직전 (~1시간 전)
-      return Colors.orangeAccent;
+      return Color(0xFFFF7043);
     } else if (now.isBefore(afterSunset)) {
       // 일몰 직후 (~1시간 후)
-      return Colors.deepOrangeAccent;
+      return Color(0xFFC44536);
     } else {
       // 밤 (일몰 1시간 후부터 다음날 일출 1시간 전까지)
-      return const Color.fromARGB(255, 21, 3, 51);
+      return const Color(0xFF0D1321);
     }
   }
 }

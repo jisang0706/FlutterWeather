@@ -23,9 +23,11 @@ class BaseBody extends StatelessWidget {
                 buildWhen: (previous, current) => current is WeatherState,
                 builder: (context, state) {
                   if (state is WeatherLoaded) {
-                    return Text(state.temperature,
-                        style: const TextStyle(
-                            fontSize: 50, fontWeight: FontWeight.bold));
+                    return Padding(padding: const EdgeInsets.only(left: 15, bottom: 40),
+                      child: Text("${state.temperature}°",
+                          style: const TextStyle(
+                              fontSize: 50, fontWeight: FontWeight.bold)),);
+
                   } else {
                     return CircularProgressIndicator();
                   }
@@ -35,7 +37,8 @@ class BaseBody extends StatelessWidget {
           buildWhen: (previous, current) => current is LocationState,
           builder: (context, state) {
             if (state is LocationLoaded) {
-              return Column(
+              return Padding(padding: const EdgeInsets.symmetric(horizontal: 34.0, vertical: 8.0),
+              child: Column(
                 children: [
                   ...List.generate(4, (index) {
                     return ShortForecastItem(
@@ -46,6 +49,7 @@ class BaseBody extends StatelessWidget {
                   }),
                   MiddleForecastItems(middleRegionId: state.middleRegionId),
                 ],
+              ),
               );
             } else {
               return CircularProgressIndicator();

@@ -71,6 +71,11 @@ class DateTimeHelper {
     return "${hour < 12 ? "오전" : "오후"} ${hour % 12 == 0 ? 12 : hour % 12}시";
   }
 
+  static List<String> weekdayString = ["월", "화", "수", "목", "금", "토", "일"];
+  static String dateToWeekday({required DateTime dateTime}) {
+    return weekdayString[dateTime.weekday - 1];
+  }
+
   static String dateToReadable({required DateTime dateTime}) {
     return "${dateTime.month}.${dateTime.day}";
   }

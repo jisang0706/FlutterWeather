@@ -15,11 +15,29 @@ class ForecastItemView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(DateTimeHelper.dateToReadable(dateTime: dateTime)),
-      Text("$tmn"),
-      Text("/"),
-      Text("$tmx")
-    ]);
+    return Padding(padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+              Text(DateTimeHelper.dateToWeekday(dateTime: dateTime),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+              Text(DateTimeHelper.dateToReadable(dateTime: dateTime),
+                style: TextStyle(fontSize: 14),),
+            ],
+            ),
+        const Spacer(),
+        Text(
+          "$tmn°",
+          style: TextStyle(color: Colors.blue),
+        ),
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: const Text("/"),),
+        Text(
+          "$tmx°",
+          style: TextStyle(color: Colors.red, fontSize: 16),
+        ),
+      ]),
+    );
   }
 }
